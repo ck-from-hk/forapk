@@ -3,7 +3,7 @@ name: Build Offline APK
 on:
 workflow_dispatch:
 push:
-branches: [ main, master , for-apk]
+branches: [ main, master ]
 
 jobs:
 build:
