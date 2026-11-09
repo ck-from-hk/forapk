@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -26,15 +25,24 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Build Cordova APK
+      - name: Build Cordova APK with Icon
         run: |
           npm install -g cordova
           cordova create app com.ckfromhk.cangjie "快快快樂學倉頡"
           cd app
-          cordova platform add android
           rm -rf www/*
           cp ../*.html www/ 2>/dev/null || true
           cp ../*.js www/ 2>/dev/null || true
+          if [ ! -f www/index.html ] && [ -f www/cangjie.html ]; then
+            cp www/cangjie.html www/index.html
+          fi
+          ICON_SRC=$(find .. -maxdepth 1 -type f \( -iname "icon.png" -o -iname "icon.jpg" -o -iname "icon.jpeg" -o -iname "*.png" -o -iname "*.jpg" \) | head -n 1)
+          if [ -n "$ICON_SRC" ]; then
+            echo "Found icon: $ICON_SRC"
+            convert "$ICON_SRC" -resize 512x512! icon.png || cp "$ICON_SRC" icon.png
+            sed -i 's|</widget>|  <icon src="icon.png" />\n</widget>|' config.xml
+          fi
+          cordova platform add android
           cordova build android --debug
 
       - name: Upload APK
