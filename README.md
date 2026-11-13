@@ -6,4 +6,6 @@
 
 技術所限直接多開一個main
 
+這又是main分出的master主要作測試用
+
 原project 快快快樂學倉頡 https://github.com/ck-from-hk/-
